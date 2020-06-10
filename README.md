@@ -2,7 +2,7 @@
 
 A simple flutter example using Open Street Maps.
 
-The application displays a logo in Carranza Stadium (Cadiz) and allows use zoom.
+The application displays a logo in Carranza Stadium (Cadiz) and allows to use zoom.
 
 ## Getting Started
 
