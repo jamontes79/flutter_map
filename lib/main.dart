@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_marker_popup/extension_api.dart';
+import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
+import 'package:fluttermaps/widgets/marker_popup.dart';
 import 'package:fluttermaps/zoombuttons_plugin_option.dart';
 import 'package:latlong/latlong.dart';
 
@@ -32,6 +35,32 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   LatLng carranzaPosition = new LatLng(36.502529144287, -6.2728500366211);
+  static final List<LatLng> _points = [
+    new LatLng(36.502529144287, -6.2728500366211),
+  ];
+
+  static const _markerSize = 40.0;
+  List<Marker> _markers;
+
+  // Used to trigger showing/hiding of popups.
+  final PopupController _popupLayerController = PopupController();
+  @override
+  void initState() {
+    super.initState();
+
+    _markers = _points
+        .map(
+          (LatLng point) => Marker(
+            point: point,
+            width: _markerSize,
+            height: _markerSize,
+            builder: (_) => Icon(Icons.location_on, size: _markerSize),
+            anchorPos: AnchorPos.align(AnchorAlign.top),
+          ),
+        )
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,31 +73,20 @@ class _MyHomePageState extends State<MyHomePage> {
           zoom: 13.0,
           plugins: [
             ZoomButtonsPlugin(),
+            PopupMarkerPlugin(),
           ],
+          onTap: (_) => _popupLayerController.hidePopup(),
         ),
         layers: [
           new TileLayerOptions(
               urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
               subdomains: ['a', 'b', 'c']),
-          new MarkerLayerOptions(
-            markers: [
-              new Marker(
-                  width: 80.0,
-                  height: 80.0,
-                  point: carranzaPosition,
-                  builder: (ctx) => Container(
-                        child: GestureDetector(
-                          onTap: () {
-                            final snackBar =
-                                SnackBar(content: Text('Estadio Carranza'));
-                            Scaffold.of(ctx).showSnackBar(snackBar);
-                          },
-                          child: FlutterLogo(
-                            colors: Colors.blue,
-                          ),
-                        ),
-                      )),
-            ],
+          PopupMarkerLayerOptions(
+            markers: _markers,
+            popupSnap: PopupSnap.top,
+            popupController: _popupLayerController,
+            popupBuilder: (BuildContext _, Marker marker) =>
+                ExamplePopup(marker),
           ),
           ZoomButtonsPluginOption(
               minZoom: 4,
@@ -79,5 +97,9 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  void showPopupForFirstMarker() {
+    _popupLayerController.togglePopup(_markers.first);
   }
 }
