@@ -5,6 +5,7 @@ import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:fluttermaps/widgets/marker_popup.dart';
 import 'package:fluttermaps/zoombuttons_plugin_option.dart';
 import 'package:latlong/latlong.dart';
+import 'package:user_location/user_location.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,6 +35,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  MapController mapController = MapController();
+  UserLocationOptions userLocationOptions;
   LatLng carranzaPosition = new LatLng(36.502529144287, -6.2728500366211);
   static final List<LatLng> _points = [
     new LatLng(36.502529144287, -6.2728500366211),
@@ -59,6 +62,16 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         )
         .toList();
+
+    userLocationOptions = UserLocationOptions(
+      context: context,
+      mapController: mapController,
+      markers: _markers,
+      updateMapLocationOnPositionChange: true,
+      showMoveToCurrentLocationFloatingActionButton: true,
+      zoomToCurrentLocationOnLoad: true,
+      showHeading: false,
+    );
   }
 
   @override
@@ -74,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
           plugins: [
             ZoomButtonsPlugin(),
             PopupMarkerPlugin(),
+            UserLocationPlugin(),
           ],
           onTap: (_) => _popupLayerController.hidePopup(),
         ),
@@ -89,15 +103,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 ExamplePopup(marker),
           ),
           ZoomButtonsPluginOption(
-              minZoom: 4,
-              maxZoom: 19,
-              mini: true,
-              padding: 10,
-              alignment: Alignment.bottomRight)
+            minZoom: 4,
+            maxZoom: 19,
+            mini: true,
+            padding: 10,
+            alignment: Alignment.topRight,
+          ),
+          userLocationOptions,
         ],
+        mapController: mapController,
       ),
     );
   }
+
+  void resetInfo() => _popupLayerController.hidePopup();
 
   void showPopupForFirstMarker() {
     _popupLayerController.togglePopup(_markers.first);
