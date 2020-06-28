@@ -84,6 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
         options: new MapOptions(
           center: carranzaPosition,
           zoom: 13.0,
+          minZoom: 4.0,
+          maxZoom: 14.0,
+          swPanBoundary: LatLng(36.35000, -6.4),
+          nePanBoundary: LatLng(36.80000, -6.00000),
           plugins: [
             ZoomButtonsPlugin(),
             PopupMarkerPlugin(),
@@ -93,8 +97,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         layers: [
           new TileLayerOptions(
-              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-              subdomains: ['a', 'b', 'c']),
+            tileProvider:
+                MBTilesImageProvider.fromAsset('assets/maps/mi_cadiz.mbtiles'),
+            maxZoom: 14.0,
+            backgroundColor: Colors.white,
+            tms: false,
+          ),
           PopupMarkerLayerOptions(
             markers: _markers,
             popupSnap: PopupSnap.top,

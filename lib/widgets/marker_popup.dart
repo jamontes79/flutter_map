@@ -32,7 +32,7 @@ class _ExamplePopupState extends State<ExamplePopup> {
             Padding(
               padding: EdgeInsets.only(left: 20, right: 10),
               child: Image.asset(
-                "images/carranza.jpg",
+                "assets/images/carranza.jpg",
                 width: 80,
                 height: 40,
               ),
